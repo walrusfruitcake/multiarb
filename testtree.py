@@ -3,6 +3,9 @@
 import sys
 import multiarbtree as tree
 import multiarbnodes as nodes
+# for arbitrary-precision arithmetic without float-type errors
+import decimal as d
+# for debugging, draw tree as a graph
 import networkx as nx
 import matplotlib.pyplot as plt
 
@@ -11,25 +14,33 @@ maxInt = sys.maxsize
 print(maxInt)
 print(float(maxInt))
 
-respStr = str(input("proceed? [y]")).lower()
+respStr = str(input('proceed? [y]')).lower()
 if not((respStr == 'y') | (respStr == 'yes') | (respStr == '')):
   sys.exit()
 
 # create some currency nodes
-btc = nodes.CurrencyNode('BTC', 1, 0.02)
-usd = nodes.CurrencyNode('USD', 1/600.0, 0.02)
-ltc = nodes.CurrencyNode('LTC', 0.027, 0.02)
+comm = d.Decimal('0.02')
+exch = d.Decimal(1)
+btc = nodes.CurrencyNode('BTC', exch, comm)
+exch = d.Decimal(1)/d.Decimal(600)
+usd = nodes.CurrencyNode('USD', exch, comm)
+exch = d.Decimal('0.027')
+ltc = nodes.CurrencyNode('LTC', exch, comm)
 
 # add them to a new graph
 G = nx.MultiDiGraph();
-G.add_edge(btc, usd, commission=0.02, exchange=605.0)
-G.add_edge(btc, ltc, commission=0.02, exchange=1/0.028)
-G.add_edge(ltc, usd, commission=0.02, exchange=17.28)
+comm = d.Decimal('0.02')
+exch = d.Decimal(605)
+G.add_edge(btc, usd, commission=comm, exchange=exch)
+exch = d.Decimal(1)/d.Decimal('0.02789')
+G.add_edge(btc, ltc, commission=comm, exchange=exch)
+exch = d.Decimal('17.28')
+G.add_edge(ltc, usd, commission=comm, exchange=exch)
 
 #sys.exit()
 
 # build tree
-testTree = tree.Tree(G, btc, 1.0, 4)
+testTree = tree.Tree(G, btc, d.Decimal(1), 4)
 testTree.populateTree()
 input('last chance to examine tree.png')
 plt.clf()
