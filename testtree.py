@@ -14,28 +14,29 @@ maxInt = sys.maxsize
 print(maxInt)
 print(float(maxInt))
 
-respStr = str(input('proceed? [y]')).lower()
-if not((respStr == 'y') | (respStr == 'yes') | (respStr == '')):
-  sys.exit()
+# Deprecated as of switch to Decimal type
+#respStr = str(input('proceed? [y]')).lower()
+#if not((respStr == 'y') | (respStr == 'yes') | (respStr == '')):
+#  sys.exit()
 
+# this approach deprecated with edges-back-to-BTC
 # create some currency nodes
 comm = d.Decimal('0.02')
-exch = d.Decimal(1)
-btc = nodes.CurrencyNode('BTC', exch, comm)
-exch = d.Decimal(1)/d.Decimal(600)
-usd = nodes.CurrencyNode('USD', exch, comm)
-exch = d.Decimal('0.027')
-ltc = nodes.CurrencyNode('LTC', exch, comm)
+btc = nodes.CurrencyNode('BTC', d.Decimal(1), comm)
+usd = nodes.CurrencyNode('USD', d.Decimal(1)/d.Decimal(600), comm)
+ltc = nodes.CurrencyNode('LTC', d.Decimal('0.027'), comm)
 
-# add them to a new graph
+# add currency pairs as edges in a them to a new graph
 G = nx.MultiDiGraph();
-comm = d.Decimal('0.02')
-exch = d.Decimal(605)
-G.add_edge(btc, usd, commission=comm, exchange=exch)
-exch = d.Decimal(1)/d.Decimal('0.02789')
-G.add_edge(btc, ltc, commission=comm, exchange=exch)
-exch = d.Decimal('17.28')
-G.add_edge(ltc, usd, commission=comm, exchange=exch)
+
+G.add_edge(btc,usd, commission=comm, exchange=d.Decimal(605))
+G.add_edge(btc,ltc, commission=comm, exchange=d.Decimal(1)/d.Decimal('0.02789'))
+G.add_edge(ltc,usd, commission=comm, exchange=d.Decimal('17.28'))
+
+# test-edges back to BTC
+G.add_edge(usd,btc, commission=comm, exchange=d.Decimal(1)/d.Decimal(600))
+#G.add_edge(ltc,btc, commission=comm, exchange=d.Decimal('0.027'))
+
 
 #sys.exit()
 

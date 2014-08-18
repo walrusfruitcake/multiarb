@@ -45,9 +45,12 @@ class Tree:
       if not (edge[1] is self.rootNode.currency):
         #newChild = nodes.TreeNode(edge[1], __calcAmt(self.currNode, edge[2]))
         #self.currNode.addChild(newChild)
-        self.currNode.addChild(edge[1], self.__calcAmt(self.currNode, edge[2]))
+        amt = self.__calcAmt(self.currNode.amount, edge[2])
+        val = self.__calcVal(edge[1], amt)
+        self.currNode.addChild(edge[1], amt, val)
         # only necessary for debug-tree. edge from currNode to just-added child
         self.T.add_edge(self.currNode, self.currNode.children[-1])
+        #shell()
 
     print(self.currNode.children)
 
@@ -71,11 +74,28 @@ class Tree:
       plt.savefig('tree.png')
       input()
 
-    shell()
+    #shell()
     self.breadthComplete = True;
 
 
   # internal method. compute amount of target currency after edge transaction
-  # @param parentNode the 'from' currency in the transaction
-  def __calcAmt(self, parentNode, edgeDict):
-    return edgeDict['exchange'] * parentNode.amount * (d.Decimal(1)-edgeDict['commission'])
+  # @param amount amount of parentNode, deprecates parentNode arg
+  # @param parentNode TreeNode representing the transaction's 'from' currency
+  def __calcAmt(self, amount, edgeDict):
+    rate = edgeDict['exchange'] * (d.Decimal(1)-edgeDict['commission'])
+    return amount * rate
+
+  # method to compute value of child in base currency
+  def __calcVal(self, childCurrency, amount):
+    try:
+      edgeDict = self.graph[childCurrency][self.rootNode.currency][0]
+      # reuse calcAmt since the format of everything is the same
+      return self.__calcAmt(amount, edgeDict)
+    # if no edge exists from child currency to base currency
+    except KeyError:
+      # TODO print Traceback associated with this KeyError instance?
+      exceptStr = 'No direct value of ' + str(childCurrency)
+      exceptStr += ' in base '+str(self.rootNode.currency)
+      print(exceptStr)
+      quit()
+    

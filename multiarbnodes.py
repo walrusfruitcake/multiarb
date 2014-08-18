@@ -64,10 +64,12 @@ class TreeNode:
 
   # Accepts a CurrencyNode cNode of Decimal amount in that (not base) currency,
   # creating a TreeNode as a child node in the path
-  def addChild(self, cNode, amount):
+  def addChild(self, cNode, amount, value):
     #tNode.setDepth(self.depth + 1)
     # prepend self.?
     tNode = TreeNode(cNode, amount, self.depth+1)
-    tNode.baseVal = tNode.currency.baseRate * tNode.amount
+    # deprecated as of switch to base-currency-inbound edges
+    #tNode.baseVal = tNode.currency.baseRate * tNode.amount
+    tNode.baseVal = value
     self.children.append(tNode)
 
