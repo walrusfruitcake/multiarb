@@ -3,6 +3,9 @@
 import multiarbnodes as nodes
 # IPython for debugging
 from IPython import embed as shell
+# for debugging, wrapping each TreeNode in a networkx node
+import networkx as nx
+import matplotlib.pyplot as plt
   
 # Tree class for multiarb. Builds itself from a NetworkX MultiDiGraph
 class Tree:
@@ -19,12 +22,14 @@ class Tree:
     self.maxHeight = maxHeight
     self.breadthComplete = True;
     #print('init\'ized')
+    # networkx graph as a debugging tree
+    self.T = nx.DiGraph()
 
   # Recursive method for BFS-filling the tree
   def populateTree(self):
     # iterator over the outgoing edges from currNode. Include edge data not keys
     outEdgeIter = self.graph.out_edges_iter([self.currNode.currency], True, False)
-    print(self.currNode is self.rootNode)
+    #print(self.currNode is self.rootNode)
     # recover the rate information from the graph data
     for edge in outEdgeIter:
       print(edge)
@@ -34,18 +39,30 @@ class Tree:
       #newChild = nodes.TreeNode(edge[1], __calcAmt(self.currNode, edge[2]))
       #self.currNode.addChild(newChild)
       self.currNode.addChild(edge[1], self.__calcAmt(self.currNode, edge[2]))
+      # only necessary for debug-tree. from currNode to just-added child
+      self.T.add_edge(self.currNode, self.currNode.children[-1])
+
+    print(self.currNode.children)
 
     if not self.breadthComplete:
       return None #return void
 
     self.breadthComplete = False
 
-    print(self.currNode.children)
+    # only necessary for debug-tree visualization
+    nx.draw(self.T,None,None,False)
+    plt.savefig('tree.png')
+    input()
+
     for childNode in self.currNode.children:
       # becomes one of the children
-      print('hi')
       self.currNode = childNode
       self.populateTree();
+      # only necessary for debug-tree visualization
+      plt.clf()
+      nx.draw(self.T,None,None,False)
+      plt.savefig('tree.png')
+      input()
 
     shell()
     self.breadthComplete = True;

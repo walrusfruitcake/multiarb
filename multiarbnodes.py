@@ -46,9 +46,9 @@ class TreeNode:
     return str(self.currency) + '::' + str(self.baseVal)
 
   # String representation for evaluation
-  #def __repr__(self):
+  def __repr__(self):
     # sufficient for node identification since no duplicate currencies
-    #return self.currency.acronym
+    return self.currency.acronym
 
   # sets depth
   # deprecated

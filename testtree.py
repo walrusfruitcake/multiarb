@@ -4,6 +4,7 @@ import sys
 import multiarbtree as tree
 import multiarbnodes as nodes
 import networkx as nx
+import matplotlib.pyplot as plt
 
 print('max int size--relevant to use of nBTC vs BTC:')
 maxInt = sys.maxsize
@@ -30,3 +31,7 @@ G.add_edge(ltc, usd, commission=0.02, exchange=17.28)
 # build tree
 testTree = tree.Tree(G, btc, 1.0, 4)
 testTree.populateTree()
+input('last chance to examine tree.png')
+plt.clf()
+nx.draw(testTree.T,None,None,False)
+plt.savefig('tree.png')
