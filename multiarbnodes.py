@@ -43,12 +43,12 @@ class TreeNode:
 
   # String representation for printing
   def __str__(self):
-    return self.currency + '\n' + self.baseVal
+    return str(self.currency) + '::' + str(self.baseVal)
 
   # String representation for evaluation
-  def __repr__(self):
+  #def __repr__(self):
     # sufficient for node identification since no duplicate currencies
-    return self.currency
+    #return self.currency.acronym
 
   # sets depth
   # deprecated
@@ -59,6 +59,7 @@ class TreeNode:
   # creating a TreeNode as a child node in the path
   def addChild(self, cNode, amount):
     #tNode.setDepth(self.depth + 1)
+    # add self.?
     tNode = TreeNode(cNode, amount, self.depth+1)
     self.children.append(tNode)
 
